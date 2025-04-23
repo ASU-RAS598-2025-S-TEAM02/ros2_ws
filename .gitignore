@@ -1,0 +1,8 @@
+# Build Files
+**/build/
+**/install/
+**/log/
+
+# ROS Bag files
+*bag*/
+.db3
