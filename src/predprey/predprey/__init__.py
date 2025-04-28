@@ -1,3 +1,11 @@
+from rclpy.qos import QoSProfile, QoSHistoryPolicy, QoSReliabilityPolicy
+
+QOS_PROFILE = QoSProfile(
+    history=QoSHistoryPolicy.KEEP_LAST,
+    depth=10,
+    reliability=QoSReliabilityPolicy.BEST_EFFORT
+)
+
 class Hardware:
     ID = "05"
 
@@ -17,6 +25,8 @@ class Turtlebot:
     IMU = NAMESPACE + "imu"
     CAMERA = NAMESPACE + "oakd/rgb/preview/image_raw"
     LIDAR = NAMESPACE + "scan"
+    SLAM = NAMESPACE + "map"
+    POSE = NAMESPACE + "pose"
     
     # PUBLISHER TOPICS
     # TBD
