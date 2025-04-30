@@ -1,7 +1,6 @@
 import rclpy
 from rclpy.node import Node
-from geometry_msgs.msg import Twist
-from std_msgs.msg import Float32MultiArray
+from geometry_msgs.msg import Twist, PointStamped
 from predprey import Turtlebot
 import time
 
@@ -10,7 +9,7 @@ class MoveToTag(Node):
         super().__init__('move_to_tag')
 
         self.subscription = self.create_subscription(
-            Float32MultiArray,
+            PointStamped,
             Turtlebot().DIST_TO_ARUCO,
             self.aruco_callback,
             10
@@ -24,11 +23,13 @@ class MoveToTag(Node):
     def aruco_callback(self, msg):
         self.last_tag_time = time.time()  # Update the last tag detection time
 
-        if len(msg.data) < 3:
-            self.get_logger().warn("Invalid ArUco tag data received.")
-            return
-
-        x, y, z = msg.data  # Assuming x, y, z are the tag's position in meters
+        # Extract position data from PointStamped message
+        x = msg.point.x
+        y = msg.point.y
+        z = msg.point.z
+        
+        self.get_logger().debug(f"ArUco tag position: x={x:.3f}, y={y:.3f}, z={z:.3f}")
+        
         twist = Twist()
 
         # If the tag is far, move forward
