@@ -5,7 +5,7 @@ from sensor_msgs.msg import Imu
 from geometry_msgs.msg import PoseStamped
 import numpy as np
 from scipy.signal import butter, lfilter
-from . import ESP32, QOS_PROFILE
+from predprey import ESP32, QOS_PROFILE
 
 class IMUFilterNode(Node):
     def __init__(self):

@@ -14,7 +14,7 @@ from cv_bridge import CvBridge
 import cv2
 from PyQt5.QtGui import QImage, QPixmap, QPainter, QBrush, QColor
 import time
-from . import ESP32, Turtlebot, QOS_PROFILE
+from predprey import ESP32, Turtlebot, QOS_PROFILE
 
 # GUI FOR: IMU, CAMERA, SLAM
 
