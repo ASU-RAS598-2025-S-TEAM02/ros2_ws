@@ -1,7 +1,7 @@
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import Image, CameraInfo
-from geometry_msgs.msg import PointStamped
+from geometry_msgs.msg import PointStamped, Point
 from cv_bridge import CvBridge
 import cv2
 import numpy as np
@@ -105,7 +105,7 @@ class ArucoPoseEstimator(Node):
                     self.position_pub.publish(
                         PointStamped(
                             header=msg.header,
-                            point=PointStamped(
+                            point=Point(
                                 x=x,
                                 y=y,
                                 z=z
