@@ -23,7 +23,7 @@ class IMUFilterNode(Node):
         self.initialized = False
         self.initial_pose = None
         self.current_velocity = np.array([0.0, 0.0, 0.0])
-        self.current_position = np.array([0.0, 0.0, 0.0])
+        self.current_position = np.array([1.0, 0.0, 0.0])
         self.prev_time = None
 
         # Filter parameters
