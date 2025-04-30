@@ -22,6 +22,7 @@ setup(
         'console_scripts': [
             'esp_rel_pos = predprey.esp32_location:main',
             'tag_move = predprey.move_to_tag:main'
+            'aruco_location = predprey.aruco_pose_estimator:main',
         ],
     },
 )
