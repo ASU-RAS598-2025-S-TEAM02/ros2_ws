@@ -30,7 +30,6 @@ class IMUFilterNode(Node):
         self.cutoff_frequency = 5.0  # Hz
         self.sampling_rate = 50.0  # Hz
         self.b, self.a = butter(self.filter_order, self.cutoff_frequency / (0.5 * self.sampling_rate), btype='low')
-        self.filtered_acceleration = np.zeros(3)  # Initialize filtered acceleration
 
     def imu_callback(self, msg: Imu):
         if not self.initialized:
@@ -46,11 +45,11 @@ class IMUFilterNode(Node):
         # Extract linear acceleration
         raw_acceleration = np.array([msg.linear_acceleration.x, msg.linear_acceleration.y, msg.linear_acceleration.z])
 
-        # Apply low-pass filter (corrected to handle sequences)
-        self.filtered_acceleration = lfilter(self.b, self.a, raw_acceleration, zi=self.filtered_acceleration)[0]
+        # Apply low-pass filter
+        filtered_acceleration = lfilter(self.b, self.a, raw_acceleration)
 
         # Integrate acceleration to get velocity
-        self.current_velocity += self.filtered_acceleration * dt
+        self.current_velocity += filtered_acceleration * dt
 
         # Integrate velocity to get position
         self.current_position += self.current_velocity * dt
