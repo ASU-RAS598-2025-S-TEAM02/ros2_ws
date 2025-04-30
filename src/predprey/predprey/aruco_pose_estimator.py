@@ -1,10 +1,12 @@
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import Image, CameraInfo
+from geometry_msgs.msg import PointStamped
 from cv_bridge import CvBridge
 import cv2
 import numpy as np
 import cv2.aruco as aruco
+from . import Turtlebot
 
 class ArucoPoseEstimator(Node):
     def __init__(self):
@@ -30,17 +32,22 @@ class ArucoPoseEstimator(Node):
         self.camera_info_received = False  # New flag to prevent crash
 
         # Create subscribers
+        self.turtlebot = Turtlebot()
+
         self.image_sub = self.create_subscription(
             Image,
-            '/oakd/rgb/preview/image_raw',
+            self.turtlebot.CAMERA,
             self.image_callback,
             10)
 
         self.info_sub = self.create_subscription(
             CameraInfo,
-            '/oakd/rgb/preview/camera_info',
+            self.turtlebot.CAMERA_INFO,
             self.camera_info_callback,
             10)
+        
+        # Create publisher for marker position
+        self.position_pub = self.create_publisher(PointStamped, self.turtlebot.DIST_TO_ARUCO, 10)
 
         self.get_logger().info("ArUco Pose Estimator node has started (waiting for camera intrinsics)")
 
@@ -76,6 +83,7 @@ class ArucoPoseEstimator(Node):
             rvecs, tvecs, _ = aruco.estimatePoseSingleMarkers(
                 corners, self.marker_length, self.camera_matrix, self.dist_coeffs)
 
+            marker_positions = {}
             for i in range(len(ids)):
                 cv2.drawFrameAxes(
                     cv_image, self.camera_matrix, self.dist_coeffs,
@@ -84,14 +92,29 @@ class ArucoPoseEstimator(Node):
                 tvec = tvecs[i][0]
                 x, y, z = tvec[0], tvec[1], tvec[2]
 
-                # Calculate depth
-                depth_meters = z
-
+                # Log marker position
                 self.get_logger().info(
-                    f" Marker ID: {ids[i][0]}\n"
-                    f"  Position (tvec): x={x:.3f}m, y={y:.3f}m, z={z:.3f}m\n"
-                    f"  Depth (from camera): {depth_meters:.3f} meters",
-                    throttle_duration_sec=1.0)
+                    f"Marker ID: {ids[i][0]} - Position: x={x:.3f}m, y={y:.3f}m, z={z:.3f}m"
+                )
+
+                # Store marker position in dictionary
+                marker_positions[int(ids[i][0])] = {"x": x, "y": y, "z": z}
+
+                # Publish the position of the first detected marker
+                if i == 0:
+                    self.position_pub.publish(
+                        PointStamped(
+                            header=msg.header,
+                            point=PointStamped(
+                                x=x,
+                                y=y,
+                                z=z
+                            )
+                        )
+                    )
+
+            # Log all marker positions
+            self.get_logger().info(f"Marker positions: {marker_positions}")
 
         cv2.imshow("ArUco Pose Estimation", cv_image)
         cv2.waitKey(1)

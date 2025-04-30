@@ -14,7 +14,7 @@ from cv_bridge import CvBridge
 import cv2
 from PyQt5.QtGui import QImage, QPixmap, QPainter, QBrush, QColor
 import time
-from . import *
+from . import ESP32, Turtlebot, QOS_PROFILE
 
 # GUI FOR: IMU, CAMERA, SLAM
 
@@ -80,7 +80,7 @@ class MapWindow(qw.QWidget):
 
         self.subscription = self.node.create_subscription(
             OccupancyGrid,
-            Turtlebot.SLAM,
+            Turtlebot().SLAM,
             self.map_callback,
             QOS_PROFILE
         )
@@ -207,7 +207,7 @@ class GraphView(qw.QWidget):
         try:
             self.rpi_subscription = self.node.create_subscription(
                 Imu,
-                Turtlebot.IMU,
+                Turtlebot().IMU,
                 self.rpi_listener_callback,
                 QOS_PROFILE
             )
@@ -218,7 +218,7 @@ class GraphView(qw.QWidget):
         try:
             self.esp_subscription = self.node.create_subscription(
                 Imu,
-                ESP32.IMU,
+                ESP32().IMU,
                 self.esp_listener_callback,
                 QOS_PROFILE
             )
@@ -229,7 +229,7 @@ class GraphView(qw.QWidget):
         try:
             self.pose_subscription = self.node.create_subscription(
                 PoseWithCovarianceStamped,
-                Turtlebot.POSE,
+                Turtlebot().POSE,
                 self.pose_callback,
                 QOS_PROFILE
             )
@@ -289,7 +289,7 @@ class GraphView(qw.QWidget):
     def subscribe_to_camera(self):
         try:
             if self.camera_window is None or not self.camera_window.isVisible():
-                self.camera_window = CameraWindow(self.bridge, '/rpi_05/oakd/rgb/preview/image_raw', self.node)
+                self.camera_window = CameraWindow(self.bridge, Turtlebot().CAMERA, self.node)
             self.camera_window.show()
         except Exception as e:
             self.logger.error(f"Failed to open camera window: {e}")

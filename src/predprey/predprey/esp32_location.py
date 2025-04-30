@@ -5,24 +5,21 @@ from sensor_msgs.msg import Imu
 from geometry_msgs.msg import PoseStamped
 import numpy as np
 from scipy.signal import butter, lfilter
-from . import ESP32
+from . import ESP32, QOS_PROFILE
 
 class IMUFilterNode(Node):
     def __init__(self):
-        super().__init__('ESP32_rel_pos_node')
-        qos_profile = QoSProfile(
-            history=QoSHistoryPolicy.KEEP_LAST,
-            depth=10,
-            reliability=QoSReliabilityPolicy.BEST_EFFORT
-        )
+        super().__init__('esp32_rel_pos')
+
+        self.esp32 = ESP32()
 
         self.subscription = self.create_subscription(
             Imu,
-            ESP32.IMU,
+            self.esp32.IMU,
             self.imu_callback,
-            qos_profile=qos_profile
+            qos_profile=QOS_PROFILE
         )
-        self.publisher = self.create_publisher(PoseStamped, ESP32.RELATIVE_POSITION, 10)
+        self.publisher = self.create_publisher(PoseStamped, self.esp32.RELATIVE_POSITION, 10)
         self.initialized = False
         self.initial_pose = None
         self.current_velocity = np.array([0.0, 0.0, 0.0])
