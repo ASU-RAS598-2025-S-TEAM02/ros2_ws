@@ -3,6 +3,7 @@ from rclpy.node import Node
 from geometry_msgs.msg import Twist
 from std_msgs.msg import Float32MultiArray
 from . import Turtlebot
+import time
 
 class MoveToTag(Node):
     def __init__(self):
@@ -18,8 +19,11 @@ class MoveToTag(Node):
         self.get_logger().info("MoveToTag node has been started.")
         self.linear_speed = 0.2
         self.angular_speed = 0.5
+        self.last_tag_time = time.time()
 
     def aruco_callback(self, msg):
+        self.last_tag_time = time.time()  # Update the last tag detection time
+
         if len(msg.data) < 3:
             self.get_logger().warn("Invalid ArUco tag data received.")
             return
@@ -42,11 +46,21 @@ class MoveToTag(Node):
 
         self.publisher.publish(twist)
 
+    def spin_if_no_tag(self):
+        current_time = time.time()
+        if current_time - self.last_tag_time > 2.0:  # No tag detected for 2 seconds
+            twist = Twist()
+            twist.linear.x = 0.0
+            twist.angular.z = self.angular_speed * 0.2  # Slow spin
+            self.publisher.publish(twist)
+
 def main(args=None):
     rclpy.init(args=args)
     node = MoveToTag()
     try:
-        rclpy.spin(node)
+        while rclpy.ok():
+            rclpy.spin_once(node, timeout_sec=0.1)
+            node.spin_if_no_tag()
     except KeyboardInterrupt:
         pass
     finally:
