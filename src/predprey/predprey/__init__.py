@@ -40,7 +40,7 @@ class ESP32(Hardware):
 
         # PUBLISHER TOPICS
         self.IMU = self / "imu_data"
-        self.RELATIVE_POSITION = self / "relative_position"
+        self.RELATIVE_POSITION = self / "relative_pos"
 
 
 class Turtlebot(Hardware):
