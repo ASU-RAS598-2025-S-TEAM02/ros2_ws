@@ -39,8 +39,8 @@ class ESP32(Hardware):
         self.NAMESPACE = str(self)
 
         # PUBLISHER TOPICS
-        self.IMU = self / "imu_data"
-        self.RELATIVE_POSITION = self / "relative_pos"
+        self.IMU = str(self / "imu_data")
+        self.RELATIVE_POSITION = str(self / "relative_pos")
 
 
 class Turtlebot(Hardware):
@@ -56,24 +56,24 @@ class Turtlebot(Hardware):
         # PUBLISHER TOPICS #
         ####################
 
-        self.IMU = self / "imu"
+        self.IMU = str(self / "imu")
 
         # OAKD CAMERA
         self._oakd = self / "oakd" / "rgb" / "preview"
-        self.CAMERA = self._oakd / "image_raw"
-        self.CAMERA_INFO = self._oakd / "camera_info"
+        self.CAMERA = str(self._oakd / "image_raw")
+        self.CAMERA_INFO = str(self._oakd / "camera_info")
 
-        self.DIST_TO_ARUCO = self / "marker_pos"
+        self.DIST_TO_ARUCO = str(self / "marker_pos")
 
-        self.LIDAR = self / "scan"
-        self.SLAM = self / "map"
-        self.POSE = self / "pose"
+        self.LIDAR = str(self / "scan")
+        self.SLAM = str(self / "map")
+        self.POSE = str(self / "pose")
 
         #######################
         # SUBSCRIPTION TOPICS #
         #######################
 
-        self.CMD_VEL = self / "cmd_vel"
+        self.CMD_VEL = str(self / "cmd_vel")
 
 
 
