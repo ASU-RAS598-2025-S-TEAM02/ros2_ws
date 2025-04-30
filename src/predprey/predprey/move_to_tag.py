@@ -2,7 +2,7 @@ import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import Twist
 from std_msgs.msg import Float32MultiArray
-from . import ESP32, Turtlebot
+from . import Turtlebot
 
 class MoveToTag(Node):
     def __init__(self):
@@ -10,7 +10,7 @@ class MoveToTag(Node):
 
         self.subscription = self.create_subscription(
             Float32MultiArray,
-            ESP32().ARUCO_TAG,
+            Turtlebot().DIST_TO_ARUCO,
             self.aruco_callback,
             10
         )
