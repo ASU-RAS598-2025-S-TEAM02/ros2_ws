@@ -38,7 +38,7 @@ class ESP32(Hardware):
         #############
         # NAMESPACE #
         #############
-        # Access via self.NAMESPACE
+        # Access via self.NAMESPACE or ESP32.NAMESPACE
 
         ####################
         # PUBLISHER TOPICS #
@@ -53,7 +53,7 @@ class Turtlebot(Hardware):
         #############
         # NAMESPACE #
         #############
-        # Access via self.NAMESPACE or Turtlebot.Namespace
+        # Access via self.NAMESPACE or Turtlebot.NAMESPACE
 
         ####################
         # PUBLISHER TOPICS #
